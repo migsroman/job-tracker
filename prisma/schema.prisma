@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id // Supabase auth user ID
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User preferences
+  settings UserSettings?
+
+  // Job applications
+  jobApplications JobApplication[]
+
+  @@map("users")
+}
+
+model UserSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  preferredView     ViewMode @default(LIST)
+  emailNotifications Boolean  @default(true)
+  theme             Theme    @default(SYSTEM)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("user_settings")
+}
+
+model JobApplication {
+  id              String            @id @default(cuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  jobTitle        String
+  companyName     String
+  location        String
+  status          ApplicationStatus @default(INTERESTED)
+  applicationDate DateTime          @default(now())
+  jobUrl          String?
+  notes           String?
+  salaryRange     String?
+  priority        Priority          @default(MEDIUM)
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("job_applications")
+  @@index([userId])
+  @@index([status])
+  @@index([applicationDate])
+}
+
+enum ApplicationStatus {
+  INTERESTED
+  APPLIED
+  UNDER_REVIEW
+  PHONE_SCREEN
+  INTERVIEW_ROUND_1
+  INTERVIEW_ROUND_2
+  INTERVIEW_FINAL
+  REFERENCE_CHECK
+  OFFER_RECEIVED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+  NO_RESPONSE
+
+  @@map("application_status")
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+
+  @@map("priority")
+}
+
+enum ViewMode {
+  LIST
+  CARDS
+
+  @@map("view_mode")
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+
+  @@map("theme")
+}

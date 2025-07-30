@@ -1,24 +1,28 @@
+// Database enum mappings
 export type ApplicationStatus =
-  | "interested"
-  | "applied"
-  | "under-review"
-  | "phone-screen"
-  | "interview-round-1"
-  | "interview-round-2"
-  | "interview-final"
-  | "reference-check"
-  | "offer-received"
-  | "accepted"
-  | "rejected"
-  | "withdrawn"
-  | "no-response"
+  | "INTERESTED"
+  | "APPLIED"
+  | "UNDER_REVIEW"
+  | "PHONE_SCREEN"
+  | "INTERVIEW_ROUND_1"
+  | "INTERVIEW_ROUND_2"
+  | "INTERVIEW_FINAL"
+  | "REFERENCE_CHECK"
+  | "OFFER_RECEIVED"
+  | "ACCEPTED"
+  | "REJECTED"
+  | "WITHDRAWN"
+  | "NO_RESPONSE"
 
-export type Priority = "high" | "medium" | "low"
+export type Priority = "HIGH" | "MEDIUM" | "LOW"
 
-export type ViewMode = "list" | "cards"
+export type ViewMode = "LIST" | "CARDS"
+
+export type Theme = "LIGHT" | "DARK" | "SYSTEM"
 
 export interface JobApplication {
   id: string
+  userId: string
   jobTitle: string
   companyName: string
   location: string
@@ -28,6 +32,25 @@ export interface JobApplication {
   notes?: string
   salaryRange?: string
   priority: Priority
+  createdAt: string
+  updatedAt: string
+}
+
+export interface User {
+  id: string
+  email: string
+  name?: string
+  avatarUrl?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface UserSettings {
+  id: string
+  userId: string
+  preferredView: ViewMode
+  emailNotifications: boolean
+  theme: Theme
   createdAt: string
   updatedAt: string
 }
